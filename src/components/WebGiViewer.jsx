@@ -35,6 +35,7 @@ const WebGiViewer = forwardRef((props, ref) => {
   const [positionRef, setPositionRef] = useState(null);
   const [isPreview, setIsPreview] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [loader, setLoader] = useState(true);
 
   useImperativeHandle(ref, () => ({
     triggerPreview() {
@@ -107,7 +108,9 @@ const WebGiViewer = forwardRef((props, ref) => {
 
     // Import and add a GLB file.
     const options = { autoScale: false };
-    await manager.addFromPath("./scene-black.glb", options);
+    manager
+      .addFromPath("./scene-black.glb", options)
+      .then((res) => setLoader(false));
 
     viewer.getPlugin(TonemapPlugin).config.clipBackground = true;
 
@@ -178,6 +181,18 @@ const WebGiViewer = forwardRef((props, ref) => {
         },
       });
   }, [canvasContainerRef, viewerRef, positionRef, cameraRef, targetRef]);
+
+  useEffect(() => {
+    if (!loader) {
+      const el = document.querySelector(".loader");
+
+      //   animation-name: fadeOut;
+      //   animation-duration: 0.3s;
+      //   animation-delay: 3s;
+      //   animation-fill-mode: forwards;
+      el.style.animation = "fadeOut 0.3s 3s forwards";
+    }
+  }, [loader]);
 
   return (
     <div id="webgi-canvas-container" ref={canvasContainerRef}>
