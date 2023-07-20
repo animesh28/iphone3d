@@ -108,10 +108,10 @@ const WebGiViewer = forwardRef((props, ref) => {
 
     // Import and add a GLB file.
     const options = { autoScale: false };
-    manager
-      .addFromPath("./scene-black.glb", options)
-      .then((res) => setLoader(false));
-
+    const modelRender = await manager.addFromPath("./scene-black.glb", options);
+    if (modelRender) {
+      setLoader(false);
+    }
     viewer.getPlugin(TonemapPlugin).config.clipBackground = true;
 
     camera.setCameraOptions({ controlsEnabled: false });
